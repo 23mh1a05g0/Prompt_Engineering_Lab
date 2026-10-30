@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 12 — RAG Indexing & Retrieval</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 12</div>
+      <h1 class="experiment-title">RAG Vector Indexing &amp; Semantic Retrieval</h1>
+      <p class="experiment-desc">Ingesting institutional policies, splitting into dense chunks, and performing cosine-similarity vector searches against local document embeddings.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Vector Search Query</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Policy Presets:</span>
+        <button class="preset-btn active" onclick="setQueryPreset('strict_silence')">Strict Silence Policy</button>
+        <button class="preset-btn" onclick="setQueryPreset('library')">Library Regulations</button>
+        <button class="preset-btn" onclick="setQueryPreset('discipline')">Code of Conduct</button>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="input-row">
+        <input
+          type="text"
+          id="queryInput"
+          class="text-input"
+          placeholder="Enter question about campus regulations..."
+          value="tell me about strict silence"
+        />
+        <button class="submit-btn" onclick="handleSendQuery()">
+          <span class="btn-icon">⚡</span>
+          <span>Search Vector Store</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Retrieved Semantic Context</span>
+      </div>
+
+      <!-- Query Pill & Similarity Meta -->
+      <div class="retrieval-header">
+        <div class="query-pill-wrapper">
+          <span class="pill-label">Query:</span>
+          <span id="queryPillText" class="query-pill">tell me about strict silence</span>
+        </div>
+        <span id="similarityTag" class="similarity-pill">Cosine Sim: 0.8924 • 3 Chunks</span>
+      </div>
+
+      <!-- Response Content Box -->
+      <div class="response-card">
+        <h2 id="responseTitle" class="response-title">Strict Silence Guidelines</h2>
+        <ul id="responseList" class="response-list">
+          <li><strong>Definition:</strong> Strict silence means absolute quietness where no talking, whispering, or noise is permitted.</li>
+          <li><strong>Locations where strict silence must be observed:</strong>
+            <ul class="nested-bullets">
+              <li>Central Library Reading Halls</li>
+              <li>Examination Centers</li>
+              <li>Server &amp; Research Labs</li>
+            </ul>
+          </li>
+          <li><strong>Purpose:</strong> To maintain an undisturbed academic environment conducive to focused study and high concentration.</li>
+          <li><strong>Expectations:</strong> Mobile devices must be placed on silent mode; group discussions must be relocated to seminar rooms.</li>
+          <li><strong>Exceptions:</strong> Emergency announcements made by designated proctors or college authorities.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
