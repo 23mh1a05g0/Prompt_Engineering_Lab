@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 06 — Role-Based & Negative Prompting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 06</div>
+      <h1 class="experiment-title">Role-Based &amp; Negative Prompting</h1>
+      <p class="experiment-desc">Evaluate the impact of explicit persona framing and negative constraint guardrails (e.g. brand name and advertising suppression) across four simultaneous experimental setups.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Input Configuration</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Advisory Scenarios:</span>
+        <button class="preset-btn active" data-preset="investing">Modest Salary</button>
+        <button class="preset-btn" data-preset="retirement">Early Retirement</button>
+        <button class="preset-btn" data-preset="debt">Student Debt</button>
+        <button class="preset-btn" data-preset="emergency">Emergency Fund</button>
+      </div>
+
+      <!-- Input Fields -->
+      <div class="inputs-grid">
+        <div class="input-field-group">
+          <label for="topicInput" class="field-label">Topic / Advisory Inquiry</label>
+          <input type="text" id="topicInput" class="text-input" value="how to start investing with a modest monthly salary" />
+        </div>
+
+        <div class="input-field-group">
+          <label for="personaInput" class="field-label">Persona Role Framing (Positive)</label>
+          <textarea id="personaInput" class="textarea-input" rows="2">You are a licensed senior financial advisor with 15 years in personal wealth management. Adopt an encouraging, professional, and authoritative advisory tone.</textarea>
+        </div>
+
+        <div class="input-field-group">
+          <label for="negativeInput" class="field-label">Negative Guardrails &amp; Prohibitions</label>
+          <textarea id="negativeInput" class="textarea-input" rows="3">- Do NOT mention any brand names, banking apps, or brokerage platforms.
+- Do NOT include promotional slogans, affiliate links, or advertisements.
+- Focus purely on universal, objective financial principles.</textarea>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <div id="statusIndicator" class="status-indicator hidden">
+          <span class="spinner-small"></span>
+          <span id="statusText">Evaluating 4 configurations with Gemini 1.5 Flash...</span>
+        </div>
+        <button id="runBtn" class="submit-btn">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">Run 4-Way Comparison</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section id="resultsSection" class="section-card output-section hidden">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>4-Way Comparative Output</span>
+      </div>
+
+      <!-- Tab Filters -->
+      <div class="tab-filters">
+        <button class="tab-btn active" data-tab="all">All Modes</button>
+        <button class="tab-btn" data-tab="baseline">1. Baseline</button>
+        <button class="tab-btn" data-tab="role_based">2. Role-Based</button>
+        <button class="tab-btn" data-tab="negative_only">3. Negative-Only</button>
+        <button class="tab-btn" data-tab="combined">4. Combined</button>
+      </div>
+
+      <!-- Cards Grid -->
+      <div id="cardsGrid" class="cards-grid"></div>
+
+      <!-- Summary Metrics Table -->
+      <div class="table-container">
+        <div class="table-title">Performance &amp; Compliance Matrix</div>
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>Condition</th>
+              <th>Persona</th>
+              <th>Negative Guardrails</th>
+              <th>Word Count</th>
+              <th>Action Tips</th>
+              <th>Advisory Score</th>
+              <th>Suppression Check</th>
+            </tr>
+          </thead>
+          <tbody id="summaryTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
