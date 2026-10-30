@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 18 — Neural Style Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 18</div>
+      <h1 class="experiment-title">Neural Style Transfer (NST) with VGG-19</h1>
+      <p class="experiment-desc">Extract deep convolutional feature maps and optimize a target canvas by jointly balancing content representation loss and style Gram matrix correlations.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Input Sources &amp; Hyperparameter Tuning</span>
+      </div>
+
+      <!-- Image Inputs Grid -->
+      <div class="nst-images-grid">
+        <!-- Content Source Card -->
+        <div class="nst-img-card" id="dropContent">
+          <div class="nst-img-header">
+            <span class="nst-tag content-tag">Content Source</span>
+            <button id="btnUploadContent" class="btn-img-upload">Upload</button>
+            <input type="file" id="contentFileInput" accept="image/*" style="display:none;" />
+          </div>
+          <div class="nst-img-wrap">
+            <img id="imgContent" src="content_city.jpg" alt="Content Image" class="nst-img" />
+          </div>
+          <span id="tagContent" class="nst-caption">Urban Metropolis Landscape</span>
+        </div>
+
+        <!-- Style Target Card -->
+        <div class="nst-img-card" id="dropStyle">
+          <div class="nst-img-header">
+            <span class="nst-tag style-tag">Style Target</span>
+            <button id="btnUploadStyle" class="btn-img-upload">Upload</button>
+            <input type="file" id="styleFileInput" accept="image/*" style="display:none;" />
+          </div>
+          <div class="nst-img-wrap">
+            <img id="imgStyle" src="style_starry.jpg" alt="Style Image" class="nst-img" />
+          </div>
+          <span id="tagStyle" class="nst-caption">Van Gogh (Starry Night)</span>
+        </div>
+      </div>
+
+      <!-- Style Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Artistic Presets:</span>
+        <button class="style-chip active" data-style="starry">Van Gogh (Starry Night)</button>
+        <button class="style-chip" data-style="wave">Hokusai (Great Wave)</button>
+        <button class="style-chip" data-style="scream">Munch (The Scream)</button>
+        <button class="style-chip" data-style="mosaic">Roman Mosaic</button>
+      </div>
+
+      <!-- Sliders Row -->
+      <div class="sliders-grid">
+        <div class="slider-card">
+          <div class="slider-head">
+            <span>Content Weight (α)</span>
+            <strong id="valAlpha">1.0</strong>
+          </div>
+          <input type="range" id="sliderAlpha" min="0.1" max="10" step="0.1" value="1.0" class="nst-slider" />
+        </div>
+
+        <div class="slider-card">
+          <div class="slider-head">
+            <span>Style Weight (β)</span>
+            <strong id="valBeta">1000</strong>
+          </div>
+          <input type="range" id="sliderBeta" min="100" max="5000" step="100" value="1000" class="nst-slider" />
+        </div>
+
+        <div class="slider-card">
+          <div class="slider-head">
+            <span>Optimization Steps</span>
+            <strong id="valIters">20</strong>
+          </div>
+          <input type="range" id="sliderIters" min="5" max="50" step="5" value="20" class="nst-slider" />
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <span class="shortcut-hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to stylize</span>
+        <button id="btnSynthesize" class="submit-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Execute Neural Style Transfer</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Synthesized Neural Artwork &amp; Loss Metrics</span>
+      </div>
+
+      <!-- Optimization Metrics Strip -->
+      <div class="metrics-row">
+        <div class="metric-pill-box">
+          <span class="mp-label">Optimization Status:</span>
+          <span id="optStatus" class="status-badge complete">Optimization Converged</span>
+        </div>
+        <div class="loss-pills">
+          <span class="loss-pill">L_content: <strong id="mContentLoss">0.0400</strong></span>
+          <span class="loss-pill">L_style: <strong id="mStyleLoss">0.000085</strong></span>
+          <span class="loss-pill total-pill">L_total: <strong id="mTotalLoss">0.125</strong></span>
+        </div>
+      </div>
+
+      <!-- Synthesized Result Display -->
+      <div class="result-display-card">
+        <div class="result-img-container">
+          <img id="imgResult" src="stylized_result.jpg" alt="Neural Stylized Result" class="result-img" />
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
