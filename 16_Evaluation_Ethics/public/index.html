@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 16 — Prompt Evaluation & Ethics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 16</div>
+      <h1 class="experiment-title">Prompt Evaluation &amp; Ethics Workshop</h1>
+      <p class="experiment-desc">Automated LLM-as-a-Judge evaluation across relevance, factuality, and safety, paired with dual-channel prompt injection defense benchmarking.</p>
+    </header>
+
+    <!-- Navigation Sub-Tabs -->
+    <div class="mode-tabs">
+      <button id="tabJudgeBtn" class="mode-tab active">
+        <span>⚖️ Section 1: LLM-as-a-Judge</span>
+      </button>
+      <button id="tabInjectionBtn" class="mode-tab">
+        <span>🛡️ Section 2: Injection Defense</span>
+      </button>
+    </div>
+
+    <!-- ========================================================
+         SECTION 1: LLM-AS-A-JUDGE
+         ======================================================== -->
+    <div id="judgeSection" class="tab-pane active">
+      <!-- Input Card -->
+      <section class="section-card input-section">
+        <div class="section-label">
+          <span class="label-icon">▶</span>
+          <span>Judge Input &amp; Candidate Response</span>
+        </div>
+
+        <div class="presets-row">
+          <span class="preset-label">Audit Cases:</span>
+          <button id="presetJudge1" class="preset-chip active">Mars Solar Panels</button>
+          <button id="presetJudge2" class="preset-chip">Water Boiling Point</button>
+          <button id="presetJudge3" class="preset-chip">ChemCam Spectrometer</button>
+        </div>
+
+        <div class="inputs-grid">
+          <div class="input-field-group">
+            <label for="judgePrompt" class="field-label">Original User Inquiry</label>
+            <input type="text" id="judgePrompt" class="text-input" />
+          </div>
+          <div class="input-field-group">
+            <label for="judgeCandidate" class="field-label">Candidate Model Response</label>
+            <textarea id="judgeCandidate" class="textarea-input" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="input-bottom-bar">
+          <span class="shortcut-hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to audit</span>
+          <button id="btnRunJudge" class="submit-btn">
+            <span class="btn-icon">⚡</span>
+            <span>Run LLM-as-a-Judge Audit</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Output Card -->
+      <section class="section-card output-section">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Judge Audit Verdict &amp; Multi-Criteria Breakdown</span>
+        </div>
+
+        <div class="audit-summary-banner">
+          <div class="audit-left">
+            <span class="score-label">Overall Evaluation</span>
+            <div class="overall-display">
+              <span id="overallScore" class="overall-score-num">5.0</span>
+              <span class="overall-max">/ 5.0</span>
+            </div>
+            <div id="auditVerdict" class="verdict-pill accept">ACCEPT</div>
+          </div>
+          <div class="audit-meta">
+            <div id="judgeStatusBadge" class="status-indicator">
+              <span class="status-badge ready">Auditor Ready</span>
+            </div>
+            <span class="meta-pill">Judge: <strong id="judgeModel">gemini-2.5-flash</strong></span>
+            <span class="meta-pill">Latency: <strong id="judgeLatency">—</strong></span>
+          </div>
+        </div>
+
+        <!-- Metric Bars -->
+        <div class="metrics-grid">
+          <div class="metric-bar-card">
+            <div class="mbc-head">
+              <span>Relevance</span>
+              <strong id="scoreRelevance">5 / 5</strong>
+            </div>
+            <div class="track"><div id="barRelevance" class="bar bar-rel" style="width:100%;"></div></div>
+          </div>
+          <div class="metric-bar-card">
+            <div class="mbc-head">
+              <span>Factuality</span>
+              <strong id="scoreFactuality">5 / 5</strong>
+            </div>
+            <div class="track"><div id="barFactuality" class="bar bar-fact" style="width:100%;"></div></div>
+          </div>
+          <div class="metric-bar-card">
+            <div class="mbc-head">
+              <span>Safety</span>
+              <strong id="scoreSafety">5 / 5</strong>
+            </div>
+            <div class="track"><div id="barSafety" class="bar bar-safe" style="width:100%;"></div></div>
+          </div>
+          <div class="metric-bar-card">
+            <div class="mbc-head">
+              <span>Clarity</span>
+              <strong id="scoreClarity">5 / 5</strong>
+            </div>
+            <div class="track"><div id="barClarity" class="bar bar-clar" style="width:100%;"></div></div>
+          </div>
+        </div>
+
+        <!-- Critique Box -->
+        <div class="critique-container">
+          <div class="critique-label">Judge Qualitative Critique:</div>
+          <div id="critiqueBox" class="critique-body">Awaiting evaluation...</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================
+         SECTION 2: PROMPT INJECTION DEFENSE
+         ======================================================== -->
+    <div id="injectionSection" class="tab-pane">
+      <!-- Input Card -->
+      <section class="section-card input-section">
+        <div class="section-label">
+          <span class="label-icon">▶</span>
+          <span>Adversarial Attack Simulation</span>
+        </div>
+
+        <div class="presets-row">
+          <span class="preset-label">Attack Vectors:</span>
+          <button id="atkPreset1" class="preset-chip active">Direct Override</button>
+          <button id="atkPreset2" class="preset-chip">Hypothetical Evasion</button>
+          <button id="atkPreset3" class="preset-chip">Translation Obfuscation</button>
+        </div>
+
+        <div class="inputs-grid">
+          <div class="input-field-group">
+            <label for="secretToken" class="field-label">Target Secret Token (Guarded In System Prompt)</label>
+            <input type="text" id="secretToken" class="text-input" value="CONFIDENTIAL_KEY_SIGMA_9901" />
+          </div>
+          <div class="input-field-group">
+            <label for="attackInput" class="field-label">Adversarial Injection Payload</label>
+            <textarea id="attackInput" class="textarea-input" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="input-bottom-bar">
+          <div id="attackStatusBadge" class="status-indicator">
+            <span class="status-badge ready">Defense Sandbox Ready</span>
+          </div>
+          <button id="btnRunAttack" class="submit-btn">
+            <span class="btn-icon">🛡️</span>
+            <span>Execute Dual-Channel Test</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Output Card -->
+      <section class="section-card output-section">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Dual-Channel Defense Benchmark</span>
+        </div>
+
+        <div class="compare-grid">
+          <!-- Undefended -->
+          <div class="compare-card undefended-card">
+            <div class="compare-head">
+              <h3>Undefended Channel</h3>
+              <span id="undefendedStatus" class="status-pill status-warn">Vulnerable</span>
+            </div>
+            <div id="undefendedOutput" class="output-body">Awaiting simulation run...</div>
+          </div>
+
+          <!-- Defended -->
+          <div class="compare-card defended-card">
+            <div class="compare-head">
+              <h3>Defended Channel (Guardrails)</h3>
+              <span id="defendedStatus" class="status-pill status-secure">Secure</span>
+            </div>
+            <div id="defendedOutput" class="output-body">Awaiting simulation run...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
