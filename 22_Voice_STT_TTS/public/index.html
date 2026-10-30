@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experiment 22: Voice-to-Text &amp; Text-to-Voice</title>
+  <meta name="description" content="Multimodal System: Voice-to-Text (STT) and Text-to-Voice (TTS)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-badge">EXPERIMENT 22 • MULTIMODAL SPEECH-LANGUAGE SYSTEM</div>
+      <h1 class="header-title">Voice-to-Text &amp; Text-to-Voice System</h1>
+      <p class="header-subtitle">Continuous speech recognition (STT), conversational language reasoning, and neural voice synthesis (TTS).</p>
+    </header>
+
+    <!-- Main Content: Input & Output -->
+    <main class="main-content">
+      <!-- Input Section: STT Transcriber & Audio Input -->
+      <section class="card input-section">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">🎙️</span>
+            <h2 class="card-title">Speech-to-Text (STT) Input</h2>
+          </div>
+          <span class="badge badge-accent">16 kHz PCM</span>
+        </div>
+
+        <!-- Oscilloscope Waveform Display -->
+        <div class="oscilloscope-container">
+          <canvas id="waveCanvas" width="440" height="110"></canvas>
+          <div class="oscilloscope-hud">
+            <span class="live-dot" id="liveDot"></span>
+            <span id="oscState">Audio Stream Ready</span>
+          </div>
+        </div>
+
+        <!-- Speech Input Preset Chips -->
+        <div class="form-group">
+          <label class="input-label">Spoken Acoustic Input Presets</label>
+          <div class="preset-chips">
+            <button class="preset-chip active" id="voicePreset1">
+              <span class="chip-icon">📡</span>
+              <span class="chip-text">"Report active telemetry and subsystem health status."</span>
+            </button>
+            <button class="preset-chip" id="voicePreset2">
+              <span class="chip-icon">🧠</span>
+              <span class="chip-text">"Explain how neural style transfer preserves semantic content."</span>
+            </button>
+            <button class="preset-chip" id="voicePreset3">
+              <span class="chip-icon">🏜️</span>
+              <span class="chip-text">"Describe the rover's dust plume dynamics on the sand dune."</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Transcribed Text View & Live Mic Controls -->
+        <div class="form-group">
+          <div class="label-row">
+            <label class="input-label" for="transcriptInput">STT Transcribed Speech Input</label>
+            <span class="conf-badge" id="sttConf">Confidence: 98.9%</span>
+          </div>
+          <textarea id="transcriptInput" rows="3" placeholder="Speak into your microphone or type any question..."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn btn-secondary" id="btnMicRecord">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="micIcon">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            <span id="micText">🎙️ Start Live Microphone Speech (STT)</span>
+          </button>
+          <button class="btn btn-primary" id="btnProcessVoice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Process Speech &amp; Synthesize Voice</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Output Section: TTS Synthesizer & Output Speech -->
+      <section class="card output-section">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-icon">🔊</span>
+            <h2 class="card-title">Text-to-Speech (TTS) Voice Synthesis</h2>
+          </div>
+          <div class="output-controls">
+            <button class="btn-copy" id="btnCopyDialogue" title="Copy response to clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy</span>
+            </button>
+            <span class="status-badge complete" id="ttsStatus">TTS Ready</span>
+          </div>
+        </div>
+
+        <!-- Meta Performance Strip -->
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="metric-label">Pipeline</span>
+            <span class="metric-value highlight">STT &rarr; LLM &rarr; TTS</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Model Engine</span>
+            <span class="metric-value" id="modelUsed">gemini-3-flash-preview</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Roundtrip Latency</span>
+            <span class="metric-value" id="roundtripLatency">1.12s</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">TTS Rate / Pitch</span>
+            <span class="metric-value">1.0x / 1.05</span>
+          </div>
+        </div>
+
+        <!-- Response Banner & Box -->
+        <div class="task-banner">
+          <span class="task-badge">SYNTHESIZED DIALOGUE</span>
+          <p>Conversational reasoning grounded in speech acoustics:</p>
+        </div>
+
+        <div class="tts-response-box" id="ttsResponseBox">
+          All primary telemetry systems are nominal with core temperature stabilizing at twenty-two degrees Celsius. Power generation and mobility subsystems report optimal health, and the rover is currently executing surface analysis protocols.
+        </div>
+
+        <!-- Equalizer Visualizer -->
+        <div class="equalizer-strip" id="equalizerStrip">
+          <div class="eq-bars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+          <div class="eq-label">Acoustic Phoneme Equalizer Stream (24 kHz)</div>
+        </div>
+
+        <!-- TTS Playback Action -->
+        <button class="btn btn-audio" id="btnSpeak">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="speakIcon">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <span id="speakText">Play Synthesized Speech</span>
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
