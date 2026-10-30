@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 11 — Simple LCEL Chain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 11</div>
+      <h1 class="experiment-title">Simple LCEL Chain Execution</h1>
+      <p class="experiment-desc">Composing and orchestrating a functional LangChain Expression Language pipeline: <code>PromptTemplate | ChatGoogleGenerativeAI | StrOutputParser</code>.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Source Text &amp; Presets</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Sample Articles:</span>
+        <button class="btn-preset active" onclick="loadPreset('ai')">Artificial Intelligence</button>
+        <button class="btn-preset" onclick="loadPreset('cloud')">Cloud Architectures</button>
+        <button class="btn-preset" onclick="loadPreset('quantum')">Quantum Computing</button>
+      </div>
+
+      <!-- Input Textarea -->
+      <div class="input-area">
+        <textarea
+          id="inputText"
+          class="prompt-textarea"
+          rows="5"
+          placeholder="Enter text to summarize..."
+          oninput="updateCounter()"
+        >Artificial intelligence is transforming software development by helping developers write code, analyze data, automate repetitive tasks, and build intelligent applications. Modern AI systems can understand natural language and assist developers across many stages of the software development lifecycle.</textarea>
+      </div>
+
+      <!-- Pipeline Stepper Track -->
+      <div class="pipeline-stepper">
+        <div class="pipe-step" id="stepInput">
+          <span class="step-num">1</span>
+          <span class="step-name">Input Dict</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step" id="stepPrompt">
+          <span class="step-num">2</span>
+          <span class="step-name">PromptTemplate</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step" id="stepModel">
+          <span class="step-num">3</span>
+          <span class="step-name">Gemini LLM</span>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step" id="stepParser">
+          <span class="step-num">4</span>
+          <span class="step-name">StrOutputParser</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <div class="word-pill">
+          <span id="wordCounter">37 words | 280 chars</span>
+        </div>
+        <div class="action-buttons">
+          <button class="btn-secondary" onclick="resetInput()">Reset</button>
+          <button id="runLcelBtn" class="submit-btn" onclick="handleRunChain()">
+            <span class="btn-icon">⚡</span>
+            <span>Invoke LCEL Chain</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Chain Output &amp; Diagnostics</span>
+      </div>
+
+      <!-- Status Header -->
+      <div class="output-status-header">
+        <span class="pipeline-status" id="pipelineStatusText">Ready for invocation</span>
+        <div id="statusBanner" class="status-banner" style="display:none;">
+          <span class="banner-dot"></span>
+          <span>Pipeline execution verified (200 OK)</span>
+        </div>
+      </div>
+
+      <!-- Metrics Row -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Pipeline Status</span>
+          <span id="metricStatus" class="metric-val">IDLE</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Latency</span>
+          <span id="metricLatency" class="metric-val">—</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Word Compression</span>
+          <span id="metricCompression" class="metric-val">—</span>
+        </div>
+      </div>
+
+      <!-- Output Body / Placeholder -->
+      <div class="output-body-container">
+        <div id="placeholderState" class="placeholder-state">
+          <p>Click "Invoke LCEL Chain" above to execute the LangChain pipeline.</p>
+        </div>
+
+        <div id="outputContent" class="output-content" style="display:none;">
+          <div class="output-header-mini">
+            <span class="output-tag">Synthesized 2-Sentence Summary</span>
+            <button class="copy-btn" onclick="copySummary()">
+              <span id="copyBtnText">Copy</span>
+            </button>
+          </div>
+          <div id="summaryText" class="summary-bubble"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Hidden elements for app.js references -->
+  <div style="display:none;">
+    <div id="inspectorCode"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
