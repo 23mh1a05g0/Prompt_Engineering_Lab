@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 09 — JSON/YAML Generation & Auto-Refinement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 09</div>
+      <h1 class="experiment-title">JSON / YAML Generation &amp; Auto-Refinement</h1>
+      <p class="experiment-desc">Generate deterministic, machine-readable JSON and YAML payloads with server-side AST parser verification and automated syntax repair loops.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Schema &amp; Payload Specification</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Schema Presets:</span>
+        <button class="preset-btn active" data-schema="languages">Languages (JSON)</button>
+        <button class="preset-btn" data-schema="books">Books (YAML)</button>
+        <button class="preset-btn" data-schema="cloud">Microservices (JSON)</button>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area">
+        <textarea id="promptInput" class="prompt-textarea" rows="3" placeholder="Enter structured JSON or YAML prompt..."></textarea>
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <span class="shortcut-hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to execute</span>
+        <button id="runValidationBtn" class="submit-btn">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">Run Syntax Validation</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Verified AST Payload Stream</span>
+      </div>
+
+      <!-- Chat / Stream Container -->
+      <div id="chatStream" class="chat-stream"></div>
+    </section>
+
+  </div>
+
+  <!-- Hidden elements for app.js safety -->
+  <div style="display:none;">
+    <div id="referencePromptText"></div>
+    <button id="usePromptBtn"></button>
+    <button id="copyPromptBtn"></button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
