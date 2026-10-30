@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 14 — Simple LLM Agent (ReAct & Tools)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 14</div>
+      <h1 class="experiment-title">Autonomous ReAct Agent &amp; Tool Dispatch</h1>
+      <p class="experiment-desc">Autonomous multi-step reasoning agent using the ReAct (Reasoning + Acting) loop to dynamically decide when to invoke Python tools vs. direct parametric knowledge.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Agent Goal &amp; Tool Triggers</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Test Inquiries:</span>
+        <button class="preset-btn active-preset" onclick="setQuery('What is (45 * 18) / 3 + 250?')">Calculator Tool</button>
+        <button class="preset-btn" onclick="setQuery('Convert 75 miles to kilometers')">Unit Converter Tool</button>
+        <button class="preset-btn" onclick="setQuery('What is the capital of France and its primary landmark?')">Direct Knowledge</button>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area">
+        <input
+          type="text"
+          id="queryInput"
+          class="text-input"
+          placeholder="Ask a question or calculation..."
+          value="What is (45 * 18) / 3 + 250?"
+          onkeydown="if(event.key==='Enter') handleRunAgent()"
+        />
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <span class="shortcut-hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to execute</span>
+        <button id="runAgentBtn" class="submit-btn" onclick="handleRunAgent()">
+          <span class="btn-icon">⚡</span>
+          <span>Run ReAct Agent</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>ReAct Execution Trace &amp; Reasoning Stream</span>
+      </div>
+
+      <!-- Trace Stream -->
+      <div id="agentStream" class="stream-container"></div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
