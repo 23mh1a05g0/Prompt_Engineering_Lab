@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 17 — CIFAR-10 Object Classification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 17</div>
+      <h1 class="experiment-title">CIFAR-10 Classification with CNN</h1>
+      <p class="experiment-desc">Downscale image inputs into 32×32×3 RGB tensors and execute a convolutional neural network forward pass to compute softmax probability distributions across 10 object classes.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Input Image &amp; Tensor Preprocessing</span>
+      </div>
+
+      <!-- Mode Tabs -->
+      <div class="mode-tabs">
+        <button id="tabUpload" class="mode-tab active">Upload Custom Image</button>
+        <button id="tabPresets" class="mode-tab">Browse CIFAR-10 Classes</button>
+      </div>
+
+      <div class="input-content-grid">
+        <!-- Input Selection Column -->
+        <div class="input-selection-col">
+          <!-- Upload Section -->
+          <div id="uploadSection" class="tab-pane-content">
+            <div id="dropZone" class="drop-zone">
+              <input type="file" id="imageFileInput" accept="image/*" style="display:none;" />
+              <div class="drop-content">
+                <span class="drop-icon">📁</span>
+                <span class="drop-title">Drop an image here or click to browse</span>
+                <span class="drop-sub">PNG, JPG, WebP supported</span>
+              </div>
+            </div>
+
+            <div class="samples-row">
+              <span class="sample-label">Or load synthetic sample:</span>
+              <div class="sample-chips">
+                <button class="sample-chip-btn" data-sample="car">🚗 Automobile</button>
+                <button class="sample-chip-btn" data-sample="plane">✈️ Airplane</button>
+                <button class="sample-chip-btn" data-sample="dog">🐶 Dog</button>
+                <button class="sample-chip-btn" data-sample="ship">🚢 Ship</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preset 10 Classes Section -->
+          <div id="presetSection" class="tab-pane-content" style="display:none;">
+            <div class="classes-grid">
+              <button class="class-btn" data-class="airplane">✈️ Airplane</button>
+              <button class="class-btn active" data-class="automobile">🚗 Automobile</button>
+              <button class="class-btn" data-class="bird">🐦 Bird</button>
+              <button class="class-btn" data-class="cat">🐱 Cat</button>
+              <button class="class-btn" data-class="deer">🦌 Deer</button>
+              <button class="class-btn" data-class="dog">🐶 Dog</button>
+              <button class="class-btn" data-class="frog">🐸 Frog</button>
+              <button class="class-btn" data-class="horse">🐴 Horse</button>
+              <button class="class-btn" data-class="ship">🚢 Ship</button>
+              <button class="class-btn" data-class="truck">🚚 Truck</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tensor & Preview Column -->
+        <div class="preview-col">
+          <div class="preview-box">
+            <div class="preview-header">
+              <span id="inputBadge" class="preview-badge">Custom Image</span>
+              <span class="tensor-tag">32×32 Tensor</span>
+            </div>
+
+            <div class="previews-display">
+              <div class="source-preview-wrap">
+                <img id="sourceImagePreview" class="source-img" style="display:none;" />
+                <div id="noImagePrompt" class="no-img-placeholder">No image selected</div>
+              </div>
+              <div class="tensor-canvas-wrap">
+                <canvas id="cifarCanvas" width="32" height="32" class="cifar-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <span class="shortcut-hint">Press <kbd>Enter</kbd> to classify</span>
+        <button id="btnClassify" class="submit-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Run CNN Forward Pass</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>CNN Softmax Probability Distribution</span>
+      </div>
+
+      <!-- Top Result Banner -->
+      <div class="top-result-card">
+        <div class="top-result-left">
+          <span id="topEmoji" class="result-emoji">🚗</span>
+          <div class="result-info">
+            <span class="result-tag">Predicted Class</span>
+            <h2 id="topClassName" class="result-class-name">AUTOMOBILE</h2>
+          </div>
+        </div>
+        <div class="top-result-right">
+          <span class="conf-tag">Confidence</span>
+          <div id="topConfidence" class="conf-value">94.8%</div>
+          <div id="modelStatus" class="status-badge complete">Inference Complete</div>
+        </div>
+      </div>
+
+      <!-- 10 Class Probability Distribution List -->
+      <div class="prob-distribution-card">
+        <div class="prob-header">Full 10-Class Softmax Activation</div>
+        <div id="probList" class="prob-list"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
