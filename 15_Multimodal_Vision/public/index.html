@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 15 — Multimodal Prompting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 15</div>
+      <h1 class="experiment-title">Multimodal Prompting &amp; Vision Analysis</h1>
+      <p class="experiment-desc">Analyzing high-resolution planetary rover imagery with Gemini 2.5 Flash: detailed scene captioning, visual QA, and structured telemetry extraction.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Multimodal Vision Input &amp; Prompt</span>
+      </div>
+
+      <!-- Image & Mode Layout -->
+      <div class="vision-input-layout">
+        <!-- Image Preview Card -->
+        <div class="image-preview-card">
+          <img src="sample_input.jpg" alt="Planetary Rover Telemetry" class="rover-image" />
+          <div class="image-overlay-info">
+            <span>📷 Rover Telemetry HUD Image</span>
+          </div>
+        </div>
+
+        <!-- Vision Prompting Controls -->
+        <div class="vision-controls">
+          <!-- Mode Tabs -->
+          <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="caption">Captioning</button>
+            <button class="mode-tab" data-mode="vqa">Visual QA</button>
+            <button class="mode-tab" data-mode="json_extract">JSON Telemetry</button>
+            <button class="mode-tab" data-mode="comparison">CoT Vision</button>
+          </div>
+
+          <!-- Preset Chips -->
+          <div id="presetChips" class="preset-chips"></div>
+
+          <!-- Prompt Textarea -->
+          <textarea
+            id="promptInput"
+            class="prompt-textarea"
+            rows="4"
+            placeholder="Enter multimodal vision prompt..."
+          ></textarea>
+
+          <div class="input-bottom-bar">
+            <span id="charCount" class="char-count">0 chars</span>
+            <div class="action-buttons">
+              <button id="btnReset" class="btn-secondary">Reset</button>
+              <button id="btnExecute" class="submit-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>Execute Analysis</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Multimodal Model Grounding</span>
+      </div>
+
+      <!-- Output Meta Header -->
+      <div class="output-meta-strip">
+        <div id="runStatus" class="status-indicator">
+          <span class="status-badge ready">Ready</span>
+        </div>
+        <div class="meta-pills">
+          <span class="meta-pill">Model: <strong id="metaModel">gemini-2.5-flash</strong></span>
+          <span class="meta-pill">Latency: <strong id="metaLatency">—</strong></span>
+          <span class="meta-pill">Alignment: <strong id="metaGrounding">—</strong></span>
+        </div>
+      </div>
+
+      <!-- Executed Prompt Snippet -->
+      <div class="executed-prompt-banner">
+        <span class="ep-label">Executed Prompt:</span>
+        <div id="executedPromptText" class="ep-text">Click "Execute Analysis" above to begin.</div>
+      </div>
+
+      <!-- Response Content Box -->
+      <div class="response-container">
+        <div id="emptyState" class="empty-state">
+          <p>Analyzing visual features and telemetry HUD overlays...</p>
+        </div>
+
+        <div id="responseView" class="response-view hidden">
+          <div class="response-header">
+            <span id="responseTypeBadge" class="response-type-pill">Detailed Scene Caption</span>
+            <button id="copyBtn" class="copy-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <div id="responseContent" class="response-body"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
