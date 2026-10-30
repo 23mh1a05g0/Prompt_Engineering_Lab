@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 13 — Conversational RAG with Memory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 13</div>
+      <h1 class="experiment-title">Conversational RAG &amp; Context Grounding</h1>
+      <p class="experiment-desc">Full Retrieval-Augmented Generation dialog system featuring vector search over <code>college-rules123.pdf</code>, chat history retention, and citation inspection.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Query &amp; Quick Prompts</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Suggested Queries:</span>
+        <button class="preset-btn" onclick="quickAsk('Tell me about rule 2.19')">Rule 2.19 (Strict Silence)</button>
+        <button class="preset-btn" onclick="quickAsk('What are the attendance requirements?')">Attendance Rules</button>
+        <button class="preset-btn" onclick="quickAsk('What happens if I lose my ID card?')">Lost ID Card</button>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="input-row">
+        <input
+          type="text"
+          id="userInput"
+          class="text-input"
+          placeholder="Ask a question about college rules and regulations..."
+          onkeydown="if(event.key==='Enter') handleSendMessage()"
+        />
+        <button id="sendBtn" class="submit-btn" onclick="handleSendMessage()">
+          <span class="btn-icon">💬</span>
+          <span>Ask Assistant</span>
+        </button>
+      </div>
+
+      <!-- Pipeline Status Bar -->
+      <div class="pipeline-bar">
+        <div class="stepper-dots">
+          <div class="p-dot" id="pipeStep1"><span>1</span> Query</div>
+          <div class="p-dot" id="pipeStep2"><span>2</span> Retrieve</div>
+          <div class="p-dot" id="pipeStep3"><span>3</span> Augment</div>
+          <div class="p-dot" id="pipeStep4"><span>4</span> Generate</div>
+        </div>
+        <div class="status-meta">
+          <span class="status-indicator-text" id="statusText">Ready</span>
+          <button class="btn-clear-chat" onclick="handleClearChat()">Clear History</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section class="section-card output-section">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Conversational Dialog &amp; Grounding</span>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="chatMessages" class="chat-container">
+        <div class="msg-row assistant-row">
+          <div class="msg-avatar">🤖</div>
+          <div class="msg-content">
+            <div class="msg-header">
+              <span class="sender-name">CampusRAG Assistant</span>
+              <span class="tag-pill tag-system">System Initialized</span>
+            </div>
+            <div class="msg-bubble assistant-bubble">
+              Hello! I am your Campus Regulations AI Assistant. I have indexed <code>college-rules123.pdf</code> into a semantic vector store. Ask me any question regarding attendance, conduct, library, or silence policies!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
