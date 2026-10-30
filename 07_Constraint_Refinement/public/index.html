@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 07 — Constraint Specification & Iterative Refinement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 07</div>
+      <h1 class="experiment-title">Constraint Specification &amp; Iterative Refinement</h1>
+      <p class="experiment-desc">Systematically evaluate how length boundaries, structural formatting, and mandatory keyword anchors progressively eliminate LLM variance across 3 iterative cycles.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Source Article &amp; Presets</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Sample Articles:</span>
+        <button class="preset-btn active" data-preset="ai">Artificial Intelligence</button>
+        <button class="preset-btn" data-preset="quantum">Quantum Computing</button>
+        <button class="preset-btn" data-preset="energy">Renewable Energy</button>
+      </div>
+
+      <!-- Article Input -->
+      <div class="input-area">
+        <textarea id="articleInput" class="article-textarea" rows="7" placeholder="Paste source article text here..."></textarea>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="input-bottom-bar">
+        <div class="word-counter-pill">
+          <span>Source Length:</span>
+          <strong id="articleWordCount">0 words</strong>
+        </div>
+        <div id="statusIndicator" class="status-indicator hidden">
+          <span class="spinner-small"></span>
+          <span id="statusText">Executing 3 Refinement Cycles with Gemini...</span>
+        </div>
+        <button id="runBtn" class="submit-btn">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">Execute 3-Cycle Refinement</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <section id="resultsSection" class="section-card output-section hidden">
+      <div class="section-label">
+        <span class="label-icon">◆</span>
+        <span>Iterative Refinement Results</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-filters">
+        <button class="tab-btn active" data-tab="all">All 3 Cycles</button>
+        <button class="tab-btn" data-tab="cycle1">Cycle 1 (Unconstrained)</button>
+        <button class="tab-btn" data-tab="cycle2">Cycle 2 (Length Constrained)</button>
+        <button class="tab-btn" data-tab="cycle3">Cycle 3 (Fully Specified)</button>
+      </div>
+
+      <!-- Cards Grid -->
+      <div id="cardsGrid" class="cards-grid"></div>
+
+      <!-- Summary Matrix Table -->
+      <div class="table-container">
+        <div class="table-title">Constraint Compliance Matrix</div>
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>Refinement Cycle</th>
+              <th>Applied Constraints</th>
+              <th>Word Count</th>
+              <th>Bullet Count</th>
+              <th>Keywords</th>
+              <th>Compliance</th>
+              <th>Evaluation</th>
+            </tr>
+          </thead>
+          <tbody id="summaryTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
