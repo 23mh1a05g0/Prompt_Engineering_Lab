@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 02 – Baseline vs. Enhanced Prompts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 02</div>
+      <h1 class="experiment-title">Baseline vs Enhanced Prompts</h1>
+      <p class="experiment-desc">Contrast naive baseline prompts against engineered prompts with persona framing, schema enforcement, and strict constraints using Google Gemini.</p>
+    </header>
+
+    <!-- ===== INPUT ===== -->
+    <section class="section-card">
+      <div class="section-label"><span class="label-icon">▶</span><span>Input</span></div>
+      <div class="input-row">
+        <input type="text" id="topic-input" class="topic-input"
+          placeholder="e.g. Machine Learning, Photosynthesis, Quantum Computing..." value="Machine Learning" autocomplete="off" />
+        <button id="run-btn" class="submit-btn">
+          <span>Compare Prompts</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="section-card loading-card" hidden>
+      <div class="loading-spinner"></div>
+      <div class="loading-steps">
+        <div class="loading-step"><span class="step-dot active"></span><span>Executing Baseline Prompt...</span></div>
+        <div class="loading-step"><span class="step-dot"></span><span>Executing Enhanced Prompt...</span></div>
+        <div class="loading-step"><span class="step-dot"></span><span>Evaluating Output Quality with AI...</span></div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="section-card error-card" hidden>
+      <div class="error-icon">⚠️</div>
+      <div id="error-message" class="error-message"></div>
+      <button id="retry-btn" class="submit-btn" style="margin-top:0.75rem;">Try Again</button>
+    </div>
+
+    <!-- ===== OUTPUT ===== -->
+    <div id="results" hidden>
+
+      <!-- Prompt Anatomy -->
+      <section class="section-card" style="margin-bottom:1.25rem;">
+        <div class="section-label"><span class="label-icon">◆</span><span>Prompt Anatomy</span></div>
+        <div class="compare-grid">
+          <div class="compare-card baseline-border">
+            <div class="compare-head"><h3>Baseline Prompt</h3><span class="tag tag-baseline">Naive</span></div>
+            <div id="baseline-prompt-text" class="compare-body"></div>
+            <div class="traits">
+              <div class="trait trait-bad">✗ No role or persona specified</div>
+              <div class="trait trait-bad">✗ No target audience framing</div>
+              <div class="trait trait-bad">✗ No structural constraints or output format</div>
+              <div class="trait trait-bad">✗ Unbounded length &amp; style</div>
+            </div>
+          </div>
+          <div class="compare-card enhanced-border">
+            <div class="compare-head"><h3>Enhanced Prompt</h3><span class="tag tag-enhanced">Engineered</span></div>
+            <div id="enhanced-prompt-text" class="compare-body"></div>
+            <div class="traits">
+              <div class="trait trait-good">✓ Explicit Persona: Expert Educator</div>
+              <div class="trait trait-good">✓ Audience Targeting: Undergraduate Beginners</div>
+              <div class="trait trait-good">✓ Strict 5-Part Structure</div>
+              <div class="trait trait-good">✓ Clear Guardrails &amp; Word Limits</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Model Responses -->
+      <section class="section-card" style="margin-bottom:1.25rem;">
+        <div class="section-label"><span class="label-icon">◆</span><span>Model Responses</span></div>
+        <div class="compare-grid">
+          <div class="compare-card baseline-border">
+            <div class="compare-head"><span class="tag tag-baseline">Baseline Output</span><span class="model-chip">gemini-1.5-flash</span></div>
+            <div id="baseline-response-text" class="response-body"></div>
+          </div>
+          <div class="compare-card enhanced-border">
+            <div class="compare-head"><span class="tag tag-enhanced">Enhanced Output</span><span class="model-chip">gemini-1.5-flash</span></div>
+            <div id="enhanced-response-text" class="response-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Evaluation & Metrics -->
+      <section class="section-card">
+        <div class="section-label"><span class="label-icon">◆</span><span>Comparative Evaluation</span></div>
+
+        <!-- Winner Banner -->
+        <div class="winner-banner">
+          <div class="winner-icon">🏆</div>
+          <div>
+            <div class="winner-label">Evaluation Winner</div>
+            <div id="winner-name" class="winner-name">Enhanced Prompt</div>
+            <div id="winner-summary" class="winner-summary"></div>
+          </div>
+        </div>
+
+        <!-- Score Bars -->
+        <div class="scores-grid">
+          <div class="score-metric-card">
+            <div class="score-metric-title">Relevance</div>
+            <div class="score-bars">
+              <div class="score-row"><span class="score-row-label baseline-col">Base</span><div class="score-bar-track"><div id="bar-base-relevance" class="score-bar baseline-bar"></div></div><span id="num-base-relevance" class="score-num">0</span></div>
+              <div class="score-row"><span class="score-row-label enhanced-col">Enh</span><div class="score-bar-track"><div id="bar-enh-relevance" class="score-bar enhanced-bar"></div></div><span id="num-enh-relevance" class="score-num">0</span></div>
+            </div>
+          </div>
+          <div class="score-metric-card">
+            <div class="score-metric-title">Completeness</div>
+            <div class="score-bars">
+              <div class="score-row"><span class="score-row-label baseline-col">Base</span><div class="score-bar-track"><div id="bar-base-completeness" class="score-bar baseline-bar"></div></div><span id="num-base-completeness" class="score-num">0</span></div>
+              <div class="score-row"><span class="score-row-label enhanced-col">Enh</span><div class="score-bar-track"><div id="bar-enh-completeness" class="score-bar enhanced-bar"></div></div><span id="num-enh-completeness" class="score-num">0</span></div>
+            </div>
+          </div>
+          <div class="score-metric-card">
+            <div class="score-metric-title">Specificity</div>
+            <div class="score-bars">
+              <div class="score-row"><span class="score-row-label baseline-col">Base</span><div class="score-bar-track"><div id="bar-base-specificity" class="score-bar baseline-bar"></div></div><span id="num-base-specificity" class="score-num">0</span></div>
+              <div class="score-row"><span class="score-row-label enhanced-col">Enh</span><div class="score-bar-track"><div id="bar-enh-specificity" class="score-bar enhanced-bar"></div></div><span id="num-enh-specificity" class="score-num">0</span></div>
+            </div>
+          </div>
+          <div class="score-metric-card">
+            <div class="score-metric-title">Style &amp; Tone</div>
+            <div class="score-bars">
+              <div class="score-row"><span class="score-row-label baseline-col">Base</span><div class="score-bar-track"><div id="bar-base-style" class="score-bar baseline-bar"></div></div><span id="num-base-style" class="score-num">0</span></div>
+              <div class="score-row"><span class="score-row-label enhanced-col">Enh</span><div class="score-bar-track"><div id="bar-enh-style" class="score-bar enhanced-bar"></div></div><span id="num-enh-style" class="score-num">0</span></div>
+            </div>
+          </div>
+          <div class="score-metric-card">
+            <div class="score-metric-title">Instruction Following</div>
+            <div class="score-bars">
+              <div class="score-row"><span class="score-row-label baseline-col">Base</span><div class="score-bar-track"><div id="bar-base-instruction_following" class="score-bar baseline-bar"></div></div><span id="num-base-instruction_following" class="score-num">0</span></div>
+              <div class="score-row"><span class="score-row-label enhanced-col">Enh</span><div class="score-bar-track"><div id="bar-enh-instruction_following" class="score-bar enhanced-bar"></div></div><span id="num-enh-instruction_following" class="score-num">0</span></div>
+            </div>
+          </div>
+          <div class="overall-card">
+            <div class="overall-scores">
+              <div class="overall-score-block baseline-overall"><span class="overall-label">Baseline Overall</span><span id="overall-base" class="overall-num">0</span></div>
+              <span class="overall-vs">vs</span>
+              <div class="overall-score-block enhanced-overall"><span class="overall-label">Enhanced Overall</span><span id="overall-enh" class="overall-num">0</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
