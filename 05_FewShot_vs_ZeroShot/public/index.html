@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 05 — Few-Shot vs Zero-Shot Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 05</div>
+      <h1 class="experiment-title">Few-Shot vs. Zero-Shot Prompting</h1>
+      <p class="experiment-desc">Observe how in-context exemplars steer formatting consistency, detail level, and structural fidelity compared to naive zero-shot generation.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Input Query</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Explore Concepts:</span>
+        <button class="chip-btn active" data-topic="Explain the concept of inertia">Inertia</button>
+        <button class="chip-btn" data-topic="Explain the concept of blockchain">Blockchain</button>
+        <button class="chip-btn" data-topic="Explain the concept of plate tectonics">Plate Tectonics</button>
+        <button class="chip-btn" data-topic="Explain the concept of quantum entanglement">Quantum Entanglement</button>
+      </div>
+
+      <!-- Input Bar -->
+      <div class="input-row">
+        <input
+          type="text"
+          id="question-input"
+          class="text-input"
+          placeholder="e.g. Explain the concept of inertia..."
+          value="Explain the concept of inertia"
+          autocomplete="off"
+        />
+        <button id="compare-btn" class="submit-btn">
+          <span class="btn-icon">⚡</span>
+          <span>Run Comparison</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div id="loading-card" class="section-card loading-card" hidden>
+      <div class="loading-spinner"></div>
+      <div class="loading-text">
+        <strong>Executing Dual Prompts...</strong>
+        <span>Querying Gemini 1.5 Flash for Zero-Shot and Few-Shot representations</span>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-banner" class="section-card error-card" hidden>
+      <div class="error-icon">⚠️</div>
+      <div id="error-message" class="error-message">Error executing prompt comparison.</div>
+    </div>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <div id="results-container" class="output-container" hidden>
+
+      <!-- Prompts Side-by-Side -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Prompt Anatomy Comparison</span>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card zero-border">
+            <div class="compare-card-head">
+              <h3>Zero-Shot Prompt</h3>
+              <span class="badge zero-badge">Direct Instruction</span>
+            </div>
+            <div id="zero-prompt-display" class="code-box"></div>
+          </div>
+          <div class="compare-card few-border">
+            <div class="compare-card-head">
+              <h3>Few-Shot Prompt (Exemplars)</h3>
+              <span class="badge few-badge">Pattern Anchored</span>
+            </div>
+            <div id="few-prompt-display" class="code-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Model Outputs Side-by-Side -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Generated Model Outputs</span>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card zero-border">
+            <div class="compare-card-head">
+              <span class="badge zero-badge">Zero-Shot Output</span>
+              <span id="zero-word-chip" class="meta-pill">~45 words</span>
+            </div>
+            <div id="zero-output-text" class="output-body"></div>
+          </div>
+          <div class="compare-card few-border">
+            <div class="compare-card-head">
+              <span class="badge few-badge">Few-Shot Output</span>
+              <span id="few-word-chip" class="meta-pill highlight-pill">~88 words</span>
+            </div>
+            <div id="few-output-text" class="output-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparative Evaluation -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Comparative Metrics</span>
+        </div>
+        <div class="eval-grid">
+          <div class="eval-stat-card">
+            <div class="eval-stat-title">Pattern Replication</div>
+            <div id="eval-pattern" class="eval-stat-val success-val">100% Structural Match</div>
+            <p class="eval-stat-desc">Few-shot output mirrors the exact definition and numbered examples schema.</p>
+          </div>
+          <div class="eval-stat-card">
+            <div class="eval-stat-title">Consistency</div>
+            <div id="eval-consistency" class="eval-stat-val">High Consistency</div>
+            <p class="eval-stat-desc">Exemplars eliminate ambiguity, anchoring output depth and predictable style.</p>
+          </div>
+          <div class="eval-stat-card">
+            <div class="eval-stat-title">Zero-Shot Behavior</div>
+            <div id="eval-zero" class="eval-stat-val zero-val">Basic Summary</div>
+            <p class="eval-stat-desc">Standard zero-shot returns factual response without requested structural formatting.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
