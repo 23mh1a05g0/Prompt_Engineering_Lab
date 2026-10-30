@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment 04 — Diagnosing Prompt Failures & Edge Cases</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ===== TITLE SECTION ===== -->
+    <header class="experiment-header">
+      <div class="experiment-number">Experiment 04</div>
+      <h1 class="experiment-title">Diagnosing Prompt Failures &amp; Edge Cases</h1>
+      <p class="experiment-desc">Detect contradictions, ambiguities, and missing constraints in naive prompts, and automatically evaluate and remediate them.</p>
+    </header>
+
+    <!-- ===== INPUT SECTION ===== -->
+    <section class="section-card input-section">
+      <div class="section-label">
+        <span class="label-icon">▶</span>
+        <span>Input Prompt &amp; Failure Modes</span>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets-row">
+        <span class="preset-label">Test Case Presets:</span>
+        <button class="preset-btn" data-preset="contradiction">Contradiction</button>
+        <button class="preset-btn" data-preset="ambiguity">Ambiguity</button>
+        <button class="preset-btn" data-preset="missing-format">Missing Format</button>
+        <button class="preset-btn" data-preset="false-premise">False Premise</button>
+      </div>
+
+      <!-- Prompt Input -->
+      <div class="input-area">
+        <textarea
+          id="prompt-input"
+          class="prompt-textarea"
+          rows="4"
+          placeholder="Enter a flawed prompt to diagnose (e.g. conflicting constraints, vague pronouns, missing context)..."
+        >Write an exhaustive, deeply technical, and fully comprehensive explanation of quantum computing algorithms, but make sure it is strictly under 15 words and suitable for a 4-year-old child.</textarea>
+      </div>
+
+      <!-- Controls -->
+      <div class="input-bottom-bar">
+        <div class="char-pill">
+          <span>Characters:</span>
+          <strong id="char-count">171</strong>
+        </div>
+        <div class="action-buttons">
+          <button id="clear-btn" class="btn-secondary">Clear</button>
+          <button id="run-btn" class="submit-btn">
+            <span>Diagnose &amp; Fix</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div id="loading-card" class="section-card loading-card" hidden>
+      <div class="loading-spinner"></div>
+      <div class="loading-details">
+        <div id="loading-stage-text" class="loading-stage-title">Diagnosing prompt failure modes...</div>
+        <div id="loading-sub-text" class="loading-stage-sub">Detecting ambiguities and contradictions with Gemini</div>
+      </div>
+      <!-- Hidden list items referenced by app.js -->
+      <div style="display:none;">
+        <span id="ls-1" class="ls-item"></span>
+        <span id="ls-2" class="ls-item"></span>
+        <span id="ls-3" class="ls-item"></span>
+        <span id="ls-4" class="ls-item"></span>
+        <span id="ls-5" class="ls-item"></span>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-banner" class="section-card error-card" hidden>
+      <div class="error-icon">⚠️</div>
+      <div id="error-message" class="error-message">An error occurred during diagnosis.</div>
+      <button id="error-retry-btn" class="submit-btn" style="margin-top:0.75rem;">Retry Diagnosis</button>
+    </div>
+
+    <!-- ===== OUTPUT SECTION ===== -->
+    <div id="results-container" class="output-container" hidden>
+
+      <!-- Diagnostic Summary Banner -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Diagnostic Findings</span>
+        </div>
+        <div class="findings-banner">
+          <div class="findings-left">
+            <span class="banner-pill">Primary Failure Mode</span>
+            <h2 id="primary-failure-text" class="banner-title">—</h2>
+          </div>
+          <div class="findings-right">
+            <span class="score-label">Baseline Quality Score</span>
+            <span id="sbc-original" class="score-value">30</span><span class="score-max">/100</span>
+          </div>
+        </div>
+
+        <!-- Issue Cards -->
+        <div id="issues-grid" class="issues-grid"></div>
+      </section>
+
+      <!-- Prompt Comparison & Remediation -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Prompt Remediation</span>
+        </div>
+        <div class="comparison-grid">
+          <div class="compare-card compare-flawed">
+            <div class="compare-card-head">
+              <h3>Original Flawed Prompt</h3>
+              <span class="status-badge badge-flawed">Flawed</span>
+            </div>
+            <div id="original-prompt-display" class="prompt-display"></div>
+          </div>
+          <div class="compare-card compare-refined">
+            <div class="compare-card-head">
+              <h3>Refined &amp; Engineered Prompt</h3>
+              <span class="status-badge badge-refined">Remediated</span>
+            </div>
+            <div id="refined-prompt-display" class="prompt-display"></div>
+          </div>
+        </div>
+
+        <div class="remediation-box">
+          <div class="remediation-title">Applied Fixes &amp; Guardrails:</div>
+          <ul id="remediation-list" class="remediation-list"></ul>
+        </div>
+      </section>
+
+      <!-- Quality Metrics -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Evaluation Metrics</span>
+        </div>
+        <div class="metrics-grid">
+          <!-- Clarity -->
+          <div class="metric-card">
+            <div class="metric-head">
+              <span class="metric-name">Clarity</span>
+              <span id="delta-clarity" class="metric-delta">+0%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag orig-tag">Base (<span id="val-orig-clarity">0</span>)</span>
+              <div class="bar-track"><div id="bar-orig-clarity" class="bar bar-orig"></div></div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag ref-tag">Refined (<span id="val-ref-clarity">0</span>)</span>
+              <div class="bar-track"><div id="bar-ref-clarity" class="bar bar-ref"></div></div>
+            </div>
+          </div>
+
+          <!-- Specificity -->
+          <div class="metric-card">
+            <div class="metric-head">
+              <span class="metric-name">Specificity</span>
+              <span id="delta-specificity" class="metric-delta">+0%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag orig-tag">Base (<span id="val-orig-specificity">0</span>)</span>
+              <div class="bar-track"><div id="bar-orig-specificity" class="bar bar-orig"></div></div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag ref-tag">Refined (<span id="val-ref-specificity">0</span>)</span>
+              <div class="bar-track"><div id="bar-ref-specificity" class="bar bar-ref"></div></div>
+            </div>
+          </div>
+
+          <!-- Coherence -->
+          <div class="metric-card">
+            <div class="metric-head">
+              <span class="metric-name">Coherence</span>
+              <span id="delta-coherence" class="metric-delta">+0%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag orig-tag">Base (<span id="val-orig-coherence">0</span>)</span>
+              <div class="bar-track"><div id="bar-orig-coherence" class="bar bar-orig"></div></div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag ref-tag">Refined (<span id="val-ref-coherence">0</span>)</span>
+              <div class="bar-track"><div id="bar-ref-coherence" class="bar bar-ref"></div></div>
+            </div>
+          </div>
+
+          <!-- Overall -->
+          <div class="metric-card">
+            <div class="metric-head">
+              <span class="metric-name">Overall Score</span>
+              <span id="delta-overall" class="metric-delta">+0%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag orig-tag">Base (<span id="val-orig-overall">0</span>)</span>
+              <div class="bar-track"><div id="bar-orig-overall" class="bar bar-orig"></div></div>
+            </div>
+            <div class="metric-row">
+              <span class="metric-tag ref-tag">Refined (<span id="val-ref-overall">0</span>)</span>
+              <div class="bar-track"><div id="bar-ref-overall" class="bar bar-ref"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Model Outputs -->
+      <section class="section-card">
+        <div class="section-label">
+          <span class="label-icon">◆</span>
+          <span>Model Output Comparison</span>
+        </div>
+        <div class="comparison-grid">
+          <div class="compare-card compare-flawed">
+            <div class="compare-card-head">
+              <h3>Baseline Output (Unconstrained)</h3>
+              <span class="model-badge">gemini-2.5-flash</span>
+            </div>
+            <div id="baseline-response-text" class="output-text"></div>
+          </div>
+          <div class="compare-card compare-refined">
+            <div class="compare-card-head">
+              <h3>Refined Output (Engineered)</h3>
+              <span class="model-badge">gemini-2.5-flash</span>
+            </div>
+            <div id="refined-response-text" class="output-text"></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- Pipeline Stepper Track for app.js -->
+  <div style="display:none;">
+    <div id="pl-1"></div><div id="pl-line-1"></div>
+    <div id="pl-2"></div><div id="pl-line-2"></div>
+    <div id="pl-3"></div><div id="pl-line-3"></div>
+    <div id="pl-4"></div><div id="pl-line-4"></div>
+    <div id="pl-5"></div><div id="pl-line-5"></div>
+    <div id="pl-6"></div><div id="pl-line-6"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
